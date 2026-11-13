@@ -1,0 +1,8 @@
+{"_note": "SYNTHETIC onboarded-vendor records used for duplicate detection.",
+ "vendors": [
+  {"vendor_id": "V-1001", "legal_name": "Sunrise Traders Private Limited", "registration_country": "IN",
+   "tax_ids": {"PAN": "AAACS1234E", "CIN": "U51909MH2015PTC123456"},
+   "bank_keys": ["IN:HDFC0001234:50100123456789"]},
+  {"vendor_id": "V-1002", "legal_name": "Northwind Supplies LLC", "registration_country": "US",
+   "tax_ids": {"EIN": "123456789"}, "bank_keys": ["US:021000021:000123456789"]}
+ ]}

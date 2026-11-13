@@ -1,0 +1,17 @@
+{
+  "policy_id": "default",
+  "policy_version": "1.0-demo",
+  "_note": "Buyer-policy defaults are configurable demo values, not universal requirements.",
+  "exactly_one_primary_bank_account": true,
+  "max_file_size_mb": 10,
+  "allowed_extensions": ["pdf", "jpg", "jpeg", "png"],
+  "max_reupload_attempts": 2,
+  "lapse_pending_after_days": 14,
+  "escalate_after_failed_attempts": 3,
+  "document_expiry_warning_days": 30,
+  "malware_scan_required": false,
+  "require_sanctions_screening": true,
+  "sole_prop_personal_account": "accept_with_evidence",
+  "accept_declared_indirect_tax_status_with_reason": true,
+  "address_mismatch_severity": "WARN"
+}

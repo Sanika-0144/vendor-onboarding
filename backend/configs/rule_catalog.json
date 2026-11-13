@@ -1,0 +1,460 @@
+{
+  "catalog_version": "2026.11-mvp-1",
+  "rules": [
+    {
+      "rule_id": "GEN-001",
+      "name": "Required profile fields present",
+      "stage": "INTAKE",
+      "handler": "profile_fields",
+      "depends_on": [
+        "profile.*"
+      ],
+      "applicability": "REQUIRED",
+      "applies_to": {},
+      "policy_flag": null,
+      "version": "1.0"
+    },
+    {
+      "rule_id": "GEN-002",
+      "name": "Legal entity type configured",
+      "stage": "INTAKE",
+      "handler": "entity_configured",
+      "depends_on": [
+        "profile.country",
+        "profile.entity_type"
+      ],
+      "applicability": "REQUIRED",
+      "applies_to": {},
+      "policy_flag": null,
+      "version": "1.0"
+    },
+    {
+      "rule_id": "GEN-003",
+      "name": "Declaration accepted",
+      "stage": "INTAKE",
+      "handler": "declaration",
+      "depends_on": [
+        "declaration"
+      ],
+      "applicability": "REQUIRED",
+      "applies_to": {},
+      "policy_flag": null,
+      "version": "1.0"
+    },
+    {
+      "rule_id": "GEN-004",
+      "name": "Required document slots uploaded",
+      "stage": "DOCUMENTS",
+      "handler": "slots_complete",
+      "depends_on": [
+        "profile.*",
+        "tax_registrations",
+        "bank_accounts",
+        "documents.*"
+      ],
+      "applicability": "REQUIRED",
+      "applies_to": {},
+      "policy_flag": null,
+      "version": "1.0"
+    },
+    {
+      "rule_id": "GEN-005",
+      "name": "File checks (type, size, signature, scan)",
+      "stage": "DOCUMENTS",
+      "handler": "file_quality",
+      "depends_on": [
+        "documents.*"
+      ],
+      "applicability": "REQUIRED",
+      "applies_to": {},
+      "policy_flag": null,
+      "version": "1.0"
+    },
+    {
+      "rule_id": "GEN-006",
+      "name": "Detected document type matches slot",
+      "stage": "DOCUMENTS",
+      "handler": "doc_type_match",
+      "depends_on": [
+        "documents.*"
+      ],
+      "applicability": "REQUIRED",
+      "applies_to": {},
+      "policy_flag": null,
+      "version": "1.0"
+    },
+    {
+      "rule_id": "GEN-007",
+      "name": "Document validity dates",
+      "stage": "DOCUMENTS",
+      "handler": "doc_validity",
+      "depends_on": [
+        "documents.*"
+      ],
+      "applicability": "REQUIRED",
+      "applies_to": {},
+      "policy_flag": null,
+      "version": "1.0"
+    },
+    {
+      "rule_id": "GEN-008",
+      "name": "Extraction confidence on critical fields",
+      "stage": "DOCUMENTS",
+      "handler": "extraction_confidence",
+      "depends_on": [
+        "documents.*"
+      ],
+      "applicability": "REQUIRED",
+      "applies_to": {},
+      "policy_flag": null,
+      "version": "1.0"
+    },
+    {
+      "rule_id": "IN-001",
+      "name": "India: PAN format and holder type",
+      "stage": "FORMAT",
+      "handler": "in_pan",
+      "depends_on": [
+        "profile.entity_type",
+        "tax_registrations"
+      ],
+      "applicability": "REQUIRED",
+      "applies_to": {
+        "registration_country": [
+          "IN"
+        ]
+      },
+      "policy_flag": null,
+      "version": "1.0"
+    },
+    {
+      "rule_id": "IN-002",
+      "name": "India: CIN format",
+      "stage": "FORMAT",
+      "handler": "in_cin",
+      "depends_on": [
+        "profile.entity_type",
+        "tax_registrations"
+      ],
+      "applicability": "REQUIRED",
+      "applies_to": {
+        "registration_country": [
+          "IN"
+        ],
+        "entity_types": [
+          "private_limited",
+          "public_limited"
+        ]
+      },
+      "policy_flag": null,
+      "version": "1.0"
+    },
+    {
+      "rule_id": "IN-003",
+      "name": "India: LLPIN format",
+      "stage": "FORMAT",
+      "handler": "in_llpin",
+      "depends_on": [
+        "profile.entity_type",
+        "tax_registrations"
+      ],
+      "applicability": "REQUIRED",
+      "applies_to": {
+        "registration_country": [
+          "IN"
+        ],
+        "entity_types": [
+          "llp"
+        ]
+      },
+      "policy_flag": null,
+      "version": "1.0"
+    },
+    {
+      "rule_id": "IN-004",
+      "name": "India: GSTIN applicability, format and PAN consistency",
+      "stage": "FORMAT",
+      "handler": "in_gstin",
+      "depends_on": [
+        "tax_registrations",
+        "documents.gst_cert"
+      ],
+      "applicability": "CONDITIONAL",
+      "applies_to": {
+        "registration_country": [
+          "IN"
+        ]
+      },
+      "policy_flag": null,
+      "version": "1.0"
+    },
+    {
+      "rule_id": "US-001",
+      "name": "US: W-9 classification and tax review routing",
+      "stage": "FORMAT",
+      "handler": "us_w9",
+      "depends_on": [
+        "profile.entity_type",
+        "documents.w9"
+      ],
+      "applicability": "REQUIRED",
+      "applies_to": {
+        "registration_country": [
+          "US"
+        ]
+      },
+      "policy_flag": null,
+      "version": "1.0"
+    },
+    {
+      "rule_id": "US-002",
+      "name": "US: EIN syntax when supplied",
+      "stage": "FORMAT",
+      "handler": "us_ein",
+      "depends_on": [
+        "tax_registrations"
+      ],
+      "applicability": "OPTIONAL",
+      "applies_to": {
+        "registration_country": [
+          "US"
+        ]
+      },
+      "policy_flag": null,
+      "version": "1.0"
+    },
+    {
+      "rule_id": "US-003",
+      "name": "US: state sales/use tax applicability",
+      "stage": "FORMAT",
+      "handler": "us_sales_tax",
+      "depends_on": [
+        "tax_registrations"
+      ],
+      "applicability": "CONDITIONAL",
+      "applies_to": {
+        "registration_country": [
+          "US"
+        ]
+      },
+      "policy_flag": null,
+      "version": "1.0"
+    },
+    {
+      "rule_id": "GB-001",
+      "name": "UK: Companies House number format",
+      "stage": "FORMAT",
+      "handler": "gb_company_number",
+      "depends_on": [
+        "profile.entity_type",
+        "tax_registrations"
+      ],
+      "applicability": "REQUIRED",
+      "applies_to": {
+        "registration_country": [
+          "GB"
+        ],
+        "entity_types": [
+          "private_limited",
+          "public_limited",
+          "llp"
+        ]
+      },
+      "policy_flag": null,
+      "version": "1.0"
+    },
+    {
+      "rule_id": "GB-002",
+      "name": "UK: UTR format when supplied",
+      "stage": "FORMAT",
+      "handler": "gb_utr",
+      "depends_on": [
+        "tax_registrations"
+      ],
+      "applicability": "OPTIONAL",
+      "applies_to": {
+        "registration_country": [
+          "GB"
+        ]
+      },
+      "policy_flag": null,
+      "version": "1.0"
+    },
+    {
+      "rule_id": "GB-003",
+      "name": "UK: VAT applicability and format",
+      "stage": "FORMAT",
+      "handler": "gb_vat",
+      "depends_on": [
+        "tax_registrations",
+        "documents.vat_cert"
+      ],
+      "applicability": "CONDITIONAL",
+      "applies_to": {
+        "registration_country": [
+          "GB"
+        ]
+      },
+      "policy_flag": null,
+      "version": "1.0"
+    },
+    {
+      "rule_id": "BNK-001",
+      "name": "Exactly one primary bank account",
+      "stage": "BANKING",
+      "handler": "bank_primary",
+      "depends_on": [
+        "bank_accounts"
+      ],
+      "applicability": "REQUIRED",
+      "applies_to": {},
+      "policy_flag": null,
+      "version": "1.0"
+    },
+    {
+      "rule_id": "BNK-002",
+      "name": "Bank identifier formats",
+      "stage": "BANKING",
+      "handler": "bank_identifiers",
+      "depends_on": [
+        "bank_accounts"
+      ],
+      "applicability": "REQUIRED",
+      "applies_to": {},
+      "policy_flag": null,
+      "version": "1.0"
+    },
+    {
+      "rule_id": "BNK-003",
+      "name": "Bank account ownership relationship",
+      "stage": "BANKING",
+      "handler": "bank_ownership",
+      "depends_on": [
+        "bank_accounts",
+        "profile.legal_name",
+        "profile.entity_type",
+        "documents.bank_auth*"
+      ],
+      "applicability": "REQUIRED",
+      "applies_to": {},
+      "policy_flag": null,
+      "version": "1.0"
+    },
+    {
+      "rule_id": "BNK-004",
+      "name": "Bank account vs bank evidence document",
+      "stage": "CROSS_REFERENCE",
+      "handler": "bank_doc_xref",
+      "depends_on": [
+        "bank_accounts",
+        "documents.bank_evidence*"
+      ],
+      "applicability": "REQUIRED",
+      "applies_to": {},
+      "policy_flag": null,
+      "version": "1.0"
+    },
+    {
+      "rule_id": "BNK-005",
+      "name": "Bank country vs operating context",
+      "stage": "BANKING",
+      "handler": "bank_country_context",
+      "depends_on": [
+        "bank_accounts",
+        "profile.country",
+        "profile.operating_countries"
+      ],
+      "applicability": "OPTIONAL",
+      "applies_to": {},
+      "policy_flag": null,
+      "version": "1.0"
+    },
+    {
+      "rule_id": "GEN-009",
+      "name": "Legal name vs registration/tax documents",
+      "stage": "CROSS_REFERENCE",
+      "handler": "xref_legal_name",
+      "depends_on": [
+        "profile.legal_name",
+        "profile.entity_type",
+        "documents.*"
+      ],
+      "applicability": "REQUIRED",
+      "applies_to": {},
+      "policy_flag": null,
+      "version": "1.0"
+    },
+    {
+      "rule_id": "GEN-010",
+      "name": "Form identifiers vs document identifiers",
+      "stage": "CROSS_REFERENCE",
+      "handler": "xref_identifiers",
+      "depends_on": [
+        "tax_registrations",
+        "documents.*"
+      ],
+      "applicability": "REQUIRED",
+      "applies_to": {},
+      "policy_flag": null,
+      "version": "1.0"
+    },
+    {
+      "rule_id": "GEN-011",
+      "name": "Address consistency",
+      "stage": "CROSS_REFERENCE",
+      "handler": "xref_address",
+      "depends_on": [
+        "profile.registered_address",
+        "documents.*"
+      ],
+      "applicability": "OPTIONAL",
+      "applies_to": {},
+      "policy_flag": null,
+      "version": "1.0"
+    },
+    {
+      "rule_id": "RSK-001",
+      "name": "Duplicate bank account against existing vendors",
+      "stage": "RISK",
+      "handler": "dup_bank",
+      "depends_on": [
+        "bank_accounts",
+        "profile.legal_name"
+      ],
+      "applicability": "REQUIRED",
+      "applies_to": {},
+      "policy_flag": null,
+      "version": "1.0"
+    },
+    {
+      "rule_id": "RSK-002",
+      "name": "Duplicate tax / registration ID against existing vendors",
+      "stage": "RISK",
+      "handler": "dup_tax",
+      "depends_on": [
+        "tax_registrations",
+        "profile.legal_name"
+      ],
+      "applicability": "REQUIRED",
+      "applies_to": {},
+      "policy_flag": null,
+      "version": "1.0"
+    },
+    {
+      "rule_id": "RSK-003",
+      "name": "Sanctions screening (adapter)",
+      "stage": "RISK",
+      "handler": "sanctions",
+      "depends_on": [
+        "profile.legal_name",
+        "profile.trading_name",
+        "profile.authorised_rep",
+        "profile.directors"
+      ],
+      "applicability": "CONDITIONAL",
+      "applies_to": {},
+      "policy_flag": "require_sanctions_screening",
+      "version": "1.0"
+    }
+  ]
+}

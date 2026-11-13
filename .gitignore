@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+
+# Frontend
+node_modules/
+dist/
+
+# Local secrets and environment
+.env
+.env.*
+!.env.example
+*.key
+backend/.dev_fernet_key
+
+# Local runtime data (never commit real vendor data)
+backend/data/*.sqlite3
+backend/data/*.db
+backend/private_uploads/*
+!backend/private_uploads/.gitkeep
+backend/audit*.jsonl
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.vscode/
+
+# Local auth secret
+backend/.auth_secret

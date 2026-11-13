@@ -1,0 +1,37 @@
+services:
+  - type: web
+    name: vendorflow-api
+    runtime: docker
+    rootDir: backend
+    dockerfilePath: ./Dockerfile
+    plan: starter
+    healthCheckPath: /health
+    disk:
+      name: vendorflow-data
+      mountPath: /var/data
+      sizeGB: 10
+    envVars:
+      - key: DATABASE_PATH
+        value: /var/data/vendorflow.sqlite3
+      - key: VENDORFLOW_UPLOAD_DIR
+        value: /var/data/private_uploads
+      - key: VENDORFLOW_AUTH_SECRET
+        generateValue: true
+      - key: VENDOR_FERNET_KEY
+        generateValue: true
+      - key: VENDORFLOW_REVIEWER_SETUP_KEY
+        generateValue: true
+      - key: VENDORFLOW_ENV
+        value: production
+      - key: FRONTEND_ORIGINS
+        value: https://vendorflow-frontend.onrender.com
+
+  - type: web
+    name: vendorflow-frontend
+    runtime: static
+    rootDir: frontend
+    buildCommand: npm ci && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_API_URL
+        value: https://vendorflow-api.onrender.com/api
