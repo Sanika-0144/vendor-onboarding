@@ -1,0 +1,15 @@
+.env
+.env.*
+!.env.example
+.venv/
+venv/
+node_modules/
+__pycache__/
+.pytest_cache/
+*.py[cod]
+backend/data/*
+!backend/data/.gitkeep
+backend/private_uploads/*
+!backend/private_uploads/.gitkeep
+backend/.auth_secret
+backend/.dev_fernet_key

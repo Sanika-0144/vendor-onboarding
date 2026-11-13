@@ -89,7 +89,15 @@ async def enforce_account_access(request: Request, call_next):
                 app_ref=match.group(1)
                 with connect() as db:
                     row=db.execute("SELECT owner_user_id FROM applications WHERE application_ref=?",(app_ref,)).fetchone()
-                if row is None: return JSONResponse(status_code=404,content={"detail":"Application not found"})
+                if row is None:
+                    # Render Free uses an ephemeral filesystem. After an instance restart,
+                    # a browser can retain an application reference whose SQLite row is gone.
+                    # Return a distinguishable response so the UI can guide the vendor to
+                    # create a fresh draft instead of presenting a generic fetch failure.
+                    return JSONResponse(
+                        status_code=410,
+                        content={"detail": "This application draft is no longer present in the current server storage. On Render Free, temporary SQLite data can be reset after restarts. Return to My Applications and create a new application."},
+                    )
                 if row["owner_user_id"] != user["id"]:
                     return JSONResponse(status_code=404,content={"detail":"Application not found"})
         except HTTPException as exc:

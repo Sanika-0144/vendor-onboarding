@@ -1,0 +1,74 @@
+{
+  "_note": "Product taxonomy and MVP rule inventory. NOT a legal determination. Confirm formats, applicability and evidence with qualified policy owners before production.",
+  "version": "2026.11-mvp",
+  "countries": {
+    "IN": {"name": "India", "entity_types": ["private_limited", "public_limited", "llp", "partnership", "sole_proprietor", "other"], "currency": "INR"},
+    "US": {"name": "United States", "entity_types": ["corporation", "llc", "llp", "partnership", "sole_proprietor", "other"], "currency": "USD"},
+    "GB": {"name": "United Kingdom", "entity_types": ["private_limited", "public_limited", "llp", "partnership", "sole_proprietor", "other"], "currency": "GBP"}
+  },
+  "entity_labels": {
+    "private_limited": "Private limited company", "public_limited": "Public limited company", "llp": "LLP",
+    "partnership": "Partnership", "sole_proprietor": "Sole proprietor / sole trader", "corporation": "Corporation",
+    "llc": "LLC", "other": "Other (manual review)"
+  },
+  "extraction": {
+    "default_threshold": 0.80,
+    "field_thresholds": {"pan": 0.90, "gstin": 0.90, "account_number": 0.90, "registration_number": 0.90, "tin_last4": 0.90, "name": 0.80}
+  },
+  "doc_types": {
+    "PAN_CARD": {"critical_fields": ["name", "pan"]},
+    "CERT_OF_INCORPORATION": {"critical_fields": ["name", "registration_number"]},
+    "PARTNERSHIP_DEED": {"critical_fields": ["name"]},
+    "GST_CERTIFICATE": {"critical_fields": ["name", "gstin"]},
+    "W9": {"critical_fields": ["name", "tax_classification", "tin_last4"]},
+    "STATE_FORMATION_DOC": {"critical_fields": ["name"]},
+    "VAT_CERTIFICATE": {"critical_fields": ["name", "vat_number"]},
+    "UTR_LETTER": {"critical_fields": ["name", "utr"]},
+    "BANK_EVIDENCE": {"critical_fields": ["account_holder", "account_number"], "max_age_days": 90},
+    "AUTH_LETTER": {"critical_fields": ["name"]},
+    "TRADE_LICENCE": {"critical_fields": ["name"], "expires": true}
+  },
+  "document_slots": [
+    {"slot_id": "pan_card", "label": "PAN card", "doc_type": "PAN_CARD", "group": "tax", "requirement": "REQUIRED",
+     "applies_to": {"registration_country": ["IN"]}, "name_xref": true},
+    {"slot_id": "incorporation_cert", "label": "Certificate of incorporation (CIN / LLPIN)", "doc_type": "CERT_OF_INCORPORATION", "group": "registration", "requirement": "REQUIRED",
+     "applies_to": {"registration_country": ["IN"], "entity_types": ["private_limited", "public_limited", "llp"]}, "name_xref": true},
+    {"slot_id": "partnership_deed", "label": "Partnership deed", "doc_type": "PARTNERSHIP_DEED", "group": "registration", "requirement": "REQUIRED",
+     "applies_to": {"registration_country": ["IN"], "entity_types": ["partnership"]}, "name_xref": true},
+    {"slot_id": "gst_cert", "label": "GST registration certificate", "doc_type": "GST_CERTIFICATE", "group": "tax", "requirement": "CONDITIONAL",
+     "condition": {"registration_type": "GSTIN"}, "applies_to": {"registration_country": ["IN"]}, "name_xref": true},
+
+    {"slot_id": "w9", "label": "IRS Form W-9", "doc_type": "W9", "group": "tax", "requirement": "REQUIRED",
+     "applies_to": {"registration_country": ["US"]}, "name_xref": true},
+    {"slot_id": "formation_doc", "label": "State formation document", "doc_type": "STATE_FORMATION_DOC", "group": "registration", "requirement": "REQUIRED",
+     "applies_to": {"registration_country": ["US"], "entity_types": ["corporation", "llc", "llp"]}, "name_xref": true},
+
+    {"slot_id": "companies_house_cert", "label": "Certificate of incorporation (Companies House)", "doc_type": "CERT_OF_INCORPORATION", "group": "registration", "requirement": "REQUIRED",
+     "applies_to": {"registration_country": ["GB"], "entity_types": ["private_limited", "public_limited", "llp"]}, "name_xref": true},
+    {"slot_id": "vat_cert", "label": "VAT registration certificate", "doc_type": "VAT_CERTIFICATE", "group": "tax", "requirement": "CONDITIONAL",
+     "condition": {"registration_type": "VAT"}, "applies_to": {"registration_country": ["GB"]}, "name_xref": true},
+    {"slot_id": "utr_letter", "label": "HMRC UTR letter", "doc_type": "UTR_LETTER", "group": "tax", "requirement": "RECOMMENDED",
+     "applies_to": {"registration_country": ["GB"]}, "name_xref": true},
+
+    {"slot_id": "trade_licence", "label": "Trade / professional licence", "doc_type": "TRADE_LICENCE", "group": "category", "requirement": "OPTIONAL",
+     "applies_to": {"categories": ["services"]}}
+  ],
+  "registration_id_map": {
+    "PAN": {"slot": "pan_card", "field": "pan"},
+    "CIN": {"slot": "incorporation_cert", "field": "registration_number"},
+    "LLPIN": {"slot": "incorporation_cert", "field": "registration_number"},
+    "GSTIN": {"slot": "gst_cert", "field": "gstin"},
+    "EIN": {"slot": "w9", "field": "tin_last4", "compare": "last4"},
+    "COMPANY_NUMBER": {"slot": "companies_house_cert", "field": "registration_number"},
+    "VAT": {"slot": "vat_cert", "field": "vat_number"},
+    "UTR": {"slot": "utr_letter", "field": "utr"}
+  },
+  "pan_holder_by_entity": {
+    "private_limited": ["company"], "public_limited": ["company"], "llp": ["firm_llp"],
+    "partnership": ["firm_llp"], "sole_proprietor": ["individual"]
+  },
+  "w9_classification_by_entity": {
+    "sole_proprietor": ["individual/sole proprietor"], "corporation": ["c corporation", "s corporation"],
+    "llc": ["llc"], "partnership": ["partnership"], "llp": ["partnership", "llc"]
+  }
+}

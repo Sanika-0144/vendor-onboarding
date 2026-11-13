@@ -132,3 +132,32 @@ def test_clamav_error_is_distinguished_from_unconfigured(monkeypatch):
     monkeypatch.setenv("CLAMAV_HOST", "unreachable.invalid")
     monkeypatch.setattr(main, "socket", type("SocketStub", (), {"create_connection": staticmethod(lambda *_a, **_k: (_ for _ in ()).throw(OSError("offline"))) }))
     assert main._clamav_scan(b"synthetic") == "ERROR"
+
+
+def test_draft_save_endpoint_updates_application(client):
+    headers = register(client, "draft-save@example.test")
+    created = client.post(
+        "/api/vendor/applications", headers=headers, json={"submission": {}}
+    )
+    assert created.status_code == 200, created.text
+    ref = created.json()["application_ref"]
+    response = client.put(
+        f"/api/vendor/applications/{ref}/draft",
+        headers=headers,
+        json={"section": "profile", "data": {"legal_name": "Synthetic Acme Private Limited"}},
+    )
+    assert response.status_code == 200, response.text
+    detail = client.get(f"/api/vendor/applications/{ref}", headers=headers)
+    assert detail.status_code == 200
+    assert detail.json()["submission"]["profile"]["legal_name"] == "Synthetic Acme Private Limited"
+
+
+def test_missing_application_returns_clear_expired_draft_message(client):
+    headers = register(client, "expired-draft@example.test")
+    response = client.put(
+        "/api/vendor/applications/VND-DOESNOTEXIST/draft",
+        headers=headers,
+        json={"section": "profile", "data": {"legal_name": "Synthetic Acme"}},
+    )
+    assert response.status_code == 410
+    assert "no longer present" in response.json()["detail"]
