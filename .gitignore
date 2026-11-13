@@ -30,3 +30,12 @@ Thumbs.db
 
 # Local auth secret
 backend/.auth_secret
+
+\RELEASE_1_NOTES.md 
+\RELEASE_2_NOTES.md 
+\RELEASE_3_NOTES.md 
+\REVIEW_AND_FIXES.md 
+\test_document_intelligence.py 
+\CURSOR_PROMPTS.md 
+\document_intelligence.py 
+\backend.zip
