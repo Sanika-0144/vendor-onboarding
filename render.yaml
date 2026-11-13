@@ -4,17 +4,13 @@ services:
     runtime: docker
     rootDir: backend
     dockerfilePath: ./Dockerfile
-    plan: starter
+    plan: free
     healthCheckPath: /health
-    disk:
-      name: vendorflow-data
-      mountPath: /var/data
-      sizeGB: 10
     envVars:
       - key: DATABASE_PATH
-        value: /var/data/vendorflow.sqlite3
+        value: /tmp/vendorflow.sqlite3
       - key: VENDORFLOW_UPLOAD_DIR
-        value: /var/data/private_uploads
+        value: /tmp/private_uploads
       - key: VENDORFLOW_AUTH_SECRET
         generateValue: true
       - key: VENDOR_FERNET_KEY

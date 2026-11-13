@@ -9,7 +9,7 @@ See `backend/requirements.txt` for Python dependencies and `frontend/package.jso
 
 ## Release 3: deployment and security hardening
 
-- Render uses a persistent disk at `/var/data`; SQLite is stored at `/var/data/vendorflow.sqlite3` and private uploads at `/var/data/private_uploads`. Keep this service to a single instance while using SQLite and its attached disk. Do not scale horizontally or remove the disk without a planned database/object-storage migration.
+- The free-tier `render.yaml` stores SQLite at `/tmp/vendorflow.sqlite3` and private uploads at `/tmp/private_uploads`. This is temporary storage: data and uploaded documents can be lost when the free service restarts, redeploys, or spins down. Use synthetic test data only. For real vendor onboarding, switch to a paid persistent disk or a managed database plus durable object storage.
 - SQLite runs with foreign keys, WAL journaling, a busy timeout, and normal synchronous mode. Local development continues to use SQLite.
 - Authentication endpoints have per-process rate limits. Reviewer bootstrap is one-time per database. Reviewer/admin accounts must be created using the setup key only for the first reviewer.
 - API responses include browser security headers; HSTS is enabled when `VENDORFLOW_ENV=production` or `RENDER` is set. CORS origins must be explicitly configured.
